@@ -83,6 +83,9 @@ def main():
         
         if choice == "1":
             title = input("Enter task title: ")
+            if not title.strip():
+                print("Error: Task title cannot be empty.")
+                continue  # vuelve al menú principal sin agregar la tarea
             description = input("Enter task description: ")
             task_manager.add_task(title, description)
         
