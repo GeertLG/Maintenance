@@ -104,6 +104,22 @@ class TaskManager:
                 return
         print(f"Task with ID {task_id} not found.")
 
+    def edit_task(self, task_id):
+        for task in self.tasks:
+            if task["id"] == task_id:
+                print(f"Current title: {task['title']}")
+                new_title = input("Enter new title (leave blank to keep current): ").strip()
+                if new_title:
+                    task["title"] = new_title
+                print(f"Current description: {task['description']}")
+                new_description = input("Enter new description (leave blank to keep current): ").strip()
+                if new_description:
+                    task["description"] = new_description
+                self.save_tasks()
+                print(f"Task ID {task_id} updated successfully!")
+                return True
+        print(f"Task with ID {task_id} not found.")
+        return False
 
 def main():
     task_manager = TaskManager()
@@ -116,7 +132,8 @@ def main():
         print("4. Update Task Status")
         print("5. Delete Task")
         print("6. Search and Filter Tasks")
-        print("7. Exit")
+        print("7. Edit Task")
+        print("8. Exit")
         
         choice = input("Enter your choice (1-7): ")
         
@@ -187,6 +204,14 @@ def main():
             task_manager.list_tasks(filter_status=filter_status, search_title=search_title)
 
         elif choice == "7":
+            task_id_input = input("Enter task ID to edit: ")
+            if task_id_input.isdigit():
+                task_id = int(task_id_input)
+                task_manager.edit_task(task_id)
+            else:
+                print("Invalid input. Please enter a numeric task ID.")
+
+        elif choice == "8":
             print("Exiting Task Manager. Goodbye!")
             break
 
