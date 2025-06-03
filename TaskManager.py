@@ -38,36 +38,36 @@ class TaskManager:
         print(f"Task '{title}' added successfully!")
     
     def list_tasks(self, filter_status=None, search_title=None):
-        # Si hay filtro por estado o búsqueda por título, filtramos la lista
+        # Filtrar tareas según criterios
         filtered_tasks = self.tasks
-        
+
         if filter_status:
             filtered_tasks = [task for task in filtered_tasks if task["status"].lower() == filter_status.lower()]
-        
+
         if search_title:
             filtered_tasks = [task for task in filtered_tasks if search_title.lower() in task["title"].lower()]
-        
+
         if not filtered_tasks:
             print("No tasks found with the given criteria.")
             return
-       
-    # Ordenar las tareas por fecha de vencimiento (due_date)
-    # Las tareas sin due_date van al final
-    def due_date_key(task):
-        if task['due_date']:
-            return datetime.strptime(task['due_date'], "%Y-%m-%d")
-        else:
-        # Si no hay fecha, poner fecha muy lejana para que queden al final
-            return datetime.max
 
-    sorted_tasks = sorted(self.tasks, key=due_date_key)
-    print("\n" + "=" * 100)
-    print(f"{'ID':<5} {'TITLE':<20} {'STATUS':<15} {'CREATED DATE':<20} {'DUE DATE':<12} {'DESCRIPTION':<30}")
-    print("-" * 100)
-    
-    for task in sorted_tasks:
-        due = task['due_date'] if task['due_date'] else "No due date"
-        print(f"{task['id']:<5} {task['title'][:18]:<20} {task['status']:<15} {task['created_date']:<20} {due:<12} {task['description'][:28]:<30}")
+        # Función auxiliar para ordenar por due_date
+        def due_date_key(task):
+            if task['due_date']:
+                return datetime.strptime(task['due_date'], "%Y-%m-%d")
+            else:
+                return datetime.max
+
+        sorted_tasks = sorted(filtered_tasks, key=due_date_key)
+
+        print("\n" + "=" * 100)
+        print(f"{'ID':<5} {'TITLE':<20} {'STATUS':<15} {'CREATED DATE':<20} {'DUE DATE':<12} {'DESCRIPTION':<30}")
+        print("-" * 100)
+
+        for task in sorted_tasks:
+            due = task['due_date'] if task['due_date'] else "No due date"
+            print(f"{task['id']:<5} {task['title'][:18]:<20} {task['status']:<15} {task['created_date']:<20} {due:<12} {task['description'][:28]:<30}")
+
         print("=" * 100 + "\n")
     
     def update_status(self, task_id, new_status):
@@ -142,14 +142,14 @@ def main():
             task_manager.list_tasks()
         
         elif choice == "3":
-    while True:
-        task_id_input = input("Enter task ID to mark as complete: ")
-        if task_id_input.isdigit():
-            task_id = int(task_id_input)
-            task_manager.mark_complete(task_id)
-            break
-        else:
-            print("Invalid input. Please enter a numeric task ID.")
+            while True:
+                task_id_input = input("Enter task ID to mark as complete: ")
+                if task_id_input.isdigit():
+                    task_id = int(task_id_input)
+                    task_manager.mark_complete(task_id)
+                break
+            else:
+                print("Invalid input. Please enter a numeric task ID.")
 
         elif choice == "4":
             while True:
@@ -158,11 +158,11 @@ def main():
                     task_id = int(task_id_input)
                     print("Choose new status: Pending, In Progress, Completed")
                     new_status = input("Enter new status: ").strip()
-                if not task_manager.update_status(task_id, new_status):
-                    input(f"Task with ID {task_id} not found or invalid status. Press Enter to return to menu.")
-                break
-        else:
-            print("Invalid input. Please enter a numeric task ID.")
+                    if not task_manager.update_status(task_id, new_status):
+                        input(f"Task with ID {task_id} not found or invalid status. Press Enter to return to menu.")
+                    break  # Sale del while si todo va bien
+                else:
+                    print("Invalid input. Please enter a numeric task ID.")
 
         elif choice == "5":
             try:
@@ -170,7 +170,7 @@ def main():
                 task_manager.delete_task(task_id)
             except ValueError:
                 print("Invalid input. Please enter a valid integer ID.")
-        
+
         elif choice == "6":
             search_title = input("Enter title keyword to search (leave blank to skip): ").strip()
             filter_status = input("Filter by status (Pending, In Progress, Completed) or leave blank: ").strip()
@@ -182,11 +182,11 @@ def main():
                 search_title = None
             
             task_manager.list_tasks(filter_status=filter_status, search_title=search_title)
-        
+
         elif choice == "7":
             print("Exiting Task Manager. Goodbye!")
             break
-        
+
         else:
             print("Invalid choice. Please try again.")
 
