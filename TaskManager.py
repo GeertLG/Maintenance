@@ -75,9 +75,14 @@ class TaskManager:
     def delete_task(self, task_id):
         for i, task in enumerate(self.tasks):
             if task["id"] == task_id:
-                removed = self.tasks.pop(i)
-                self.save_tasks()
-                print(f"Task '{removed['title']}' deleted successfully!")
+                # Confirmación antes de eliminar
+                confirm = input(f"Are you sure you want to delete the task '{task['title']}'? (y/n): ").strip().lower()
+                if confirm == 'y' or confirm == 'yes':
+                    removed = self.tasks.pop(i)
+                    self.save_tasks()
+                    print(f"Task '{removed['title']}' deleted successfully!")
+                else:
+                    print("Delete operation cancelled.")
                 return
         print(f"Task with ID {task_id} not found.")
 
@@ -119,18 +124,24 @@ def main():
             task_manager.list_tasks()
         
         elif choice == "3":
-            try:
-                task_id = int(input("Enter task ID to mark as complete: "))
-                task_manager.mark_complete(task_id)
-            except ValueError:
-                print("Invalid ID. Please enter a number.")
+            while True:
+                task_id_input = input("Enter task ID to mark as complete: ")
+                if task_id_input.isdigit():
+                    task_id = int(task_id_input)
+                    task_manager.mark_complete(task_id)
+                    break
+                else:
+                    print("Invalid input. Please enter a numeric task ID.")
         
         elif choice == "4":
-            try:
-                task_id = int(input("Enter task ID to delete: "))
-                task_manager.delete_task(task_id)
-            except ValueError:
-                print("Invalid ID. Please enter a number.")
+            while True:
+                task_id_input = input("Enter task ID to delete: ")
+                if task_id_input.isdigit():
+                    task_id = int(task_id_input)
+                    task_manager.delete_task(task_id)
+                    break
+                else:
+                    print("Invalid input. Please enter a numeric task ID.")
         
         elif choice == "5":
             print("Exiting Task Manager. Goodbye!")
