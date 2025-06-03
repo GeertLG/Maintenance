@@ -91,16 +91,19 @@ class TaskManager:
     def delete_task(self, task_id):
         for i, task in enumerate(self.tasks):
             if task["id"] == task_id:
-                # Confirmación antes de eliminar
                 confirm = input(f"Are you sure you want to delete the task '{task['title']}'? (y/n): ").strip().lower()
-                if confirm == 'y' or confirm == 'yes':
+                if confirm in ('y', 'yes'):
                     removed = self.tasks.pop(i)
+                    # Reasignar IDs para que no haya huecos
+                    for index, task in enumerate(self.tasks, start=1):
+                        task["id"] = index
                     self.save_tasks()
                     print(f"Task '{removed['title']}' deleted successfully!")
                 else:
                     print("Delete operation cancelled.")
                 return
         print(f"Task with ID {task_id} not found.")
+
 
 def main():
     task_manager = TaskManager()
